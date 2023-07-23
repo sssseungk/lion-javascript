@@ -86,7 +86,7 @@ console.log(first.matches('#message'));
 
 //* DOM 탐색을 조금 더 쉽게 하기 위해 유틸 함수 만들어서 처리하는 방법
 // querySelector를 유틸함수로 만들기 
-function getNode(){
+function getNode(node){
 
   if(typeof node !== 'string'){
     throw new Error('getNode 함수의 인수는 문자 타입이어야 합니다.')
