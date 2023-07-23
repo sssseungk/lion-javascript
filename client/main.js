@@ -21,7 +21,7 @@ function handleInput(){
   
   //? 기존값 제거해주기
   // 렌더링할 때 기존값을 제거해줘야 새로운 값을 넣을 수 있다. => clearContents 필요
-  // clearContents(result);
+  clearContents(result);
   
   //? 3. result 출력하기
   //? 계산된 새로운 값 넣어주기 
