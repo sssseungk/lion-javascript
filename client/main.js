@@ -1,4 +1,21 @@
-console.log('hello js!');
 
-const a = 10;
-const b = 10;
+import { xhr } from './lib/index.js';
+
+// xhr.get(
+//   'https://jsonplaceholder.typicode.com/users',
+//   (res)=>{
+//     console.log(res);
+//   }
+// )
+
+// Promise
+
+// xhr.get('https://www.naver.com')
+// .then((res)=>{
+
+// })
+// .catch((err)=>{
+//   err
+// })
+
+// xhr.get()
