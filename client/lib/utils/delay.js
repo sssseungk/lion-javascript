@@ -1,25 +1,11 @@
-
-
-// callback : 함수 실행 흐름을 늦춰서 좀 나중에 실행한다.
-
 import { getNode } from "../dom/getNode.js";
+import { insertLast } from "../dom/insert.js";
+import { xhrPromise } from "./xhr.js";
 
 
-function delay(callback, timeout=1000){
-  setTimeout(callback, timeout);
+function delay(callback,timeout=1000){
+  setTimeout(callback,timeout);
 }
-
-
-
-// console.log(1);
-
-// 함수 본문을 delay의 callback으로 던져서 실행시킨다.
-// 비동기코드 (2초 뒤에 실행됨)
-// delay(()=>{
-//   console.log(2);
-// }, 2000)
-
-// console.log(3);
 
 
 const first = getNode('.first');
@@ -27,37 +13,137 @@ const second = getNode('.second');
 
 
 
-
-//* 글씨가 올라간 후 돌고 내려오게 하고 싶다! 
-// //* 콜백의 문제점 예시, => 더 깔끔하게 만들기 위해 promise를 사용한다.
 // delay(()=>{
+//   console.log(1);
 //   first.style.top = '-100px';
 //   delay(()=>{
+//     console.log(2);
 //     first.style.transform = 'rotate(360deg)';
 //     delay(()=>{
+//       console.log(3);
 //       first.style.top = '0';
 //       second.style.top = '0';
 //     })
 //     second.style.top = '100px';
+//     console.log('b');
 //   })
 // })
 
 
+// delayP 함수를 실행하면 리턴되는 값이 promise 객체입니다.
 
+//  객체 합성 mixin 
 
-// delayP 함수를 실행하면 리턴되는 값이 promise 객체이다.
-function delayP(){
+const defaultOptions = {
+  shouldReject:false,
+  timeout:1000,
+  data:'성공!',
+  errorMessage:'알 수 없는 오류가 발생했습니다.'
+}
+
+function delayP(options){
   
-  // 프라미스 객체를 리턴한다.
-  return new Promise((resolve, reject) => {
-    resolve('성공입니다!!!')
+  let config = {...defaultOptions}
 
+  if(typeof options === 'number'){
+    config.timeout = options;
+  }
+  
+  if(typeof options === 'object'){
+    config = {...defaultOptions,...options}
+  }
+
+  const {shouldReject,data,errorMessage,timeout}  = config;
+  
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+
+      if(!shouldReject){
+        resolve(data)
+      }else{
+        reject({message:errorMessage});
+      }  
+    }, timeout);
   })
+}
+
+
+
+delayP({shouldReject:false})
+.then((res)=>{
+  // console.log( res );
+})
+.catch(({message})=>{
+  alert(message)
+})
+.finally(()=>{
+  // console.log('어쨋든 실행합니다.');
+})
+
+
+
+// console.log(2);
+// console.log(3);
+
+
+
+
+async function delayA(){
+  return '성공!'
+}
+
+const data = await delayA();
+
+// console.log( data );
+
+
+
+// async - 함수가 promise 객체를 반환 하도록
+//       - await 사용 
+
+// await - 코드의 실행 흐름 제어 (멈춰)
+//       - result값 가져오기 
+
+
+async function 라면끓이기(){
+
+  delayP({data:'물넣기'}).then((res)=>{
+    console.log( res );
+  })
+
+  const 스프 = await delayP({data:'스프넣기'})
+  console.log(스프);
+
+  const 면 = await delayP({data:'면넣기'})
+  console.log(면);
+
+  const 계란 = await delayP({data:'계란넣기'})
+  console.log(계란);
+
+  const 접시 = await delayP({data:'접시'})
+  console.log(접시);
+}
+
+
+// 라면끓이기()
+
+// then 결과 가져오기
+// await 결과 가져오기 
+
+async function getData(){
+
+  const data = xhrPromise.get('https://pokeapi.co/api/v2/pokemon/76')
+
+  // data.then((res)=>{
+  //   console.log( res );
+  // })
+  
+  const pokemon = await data;
+
+  console.log( pokemon.sprites['front_default'] );
+
+  insertLast(document.body,`<img src="${pokemon.sprites['front_default']}" alt="" />`)
 
 }
 
-// 프라미스 객체가 나왔기 때문에 뒤에 then절을 쓸 수 있음
-delayP().then((result)=>{       // 프라미스 객체 반환
-  console.log(result);
-
-});    
+getData()
